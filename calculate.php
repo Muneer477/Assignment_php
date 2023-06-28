@@ -7,22 +7,21 @@
 <body>
     <div class="container">
         <h1>Electricity Rate Calculator</h1>
-        <form method="POST" action="calculate.php">
-            <div class="form-group">
-                <label for="voltage">Voltage (V)</label>
-                <input type="number" class="form-control" id="voltage" name="voltage">
-            </div>
-            <div class="form-group">
-                <label for="current">Current (A)</label>
-                <input type="number" class="form-control" id="current" name="current">
-            </div>
-            <div class="form-group">
-                <label for="current_rate">Current Rate</label>
-                <input type="number" class="form-control" id="current_rate" name="current_rate">
-            </div>
-            <button type="submit" class="btn btn-primary">Calculate</button>
-        </form>
+        <form method="POST">
+        <label for="voltage">Voltage (V): </label>
+        <input type="number" id="voltage" name="voltage" step="any"><br>
+        <label for="current">Current (A): </label>
+        <input type="number" id="current" name="current" step="any"><br>
+        <label for="current_rate">Current Rate: </label>
+        <input type="number" id="current_rate" name="current_rate" step="any"><br>
+        <input type="submit" value="Calculate">
+</form>
+
     </div>
+   
+
+</form>
+
 </body>
 </html>
 <?php
@@ -45,8 +44,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return $energy * ($current_rate / 100); // Total charge
     }
 
-    echo "Power: " . calculatePower($voltage, $current) . " Wh<br>";
-    echo "Energy for 1 hour: " . calculateEnergy($voltage, $current, 1) . " kWh<br>";
-    echo "Total charge per hour: MYR" . calculateTotalCharge($voltage, $current, $current_rate, 1) . "<br>";
-    echo "Total charge for a day :  MYR" . calculateTotalCharge($voltage, $current, $current_rate, 24) . "<br>";
+    echo "<table>";
+    echo "<tr><th>Hour</th><th>Energy (kWh)</th><th>Total (RM)</th></tr>";
+    for ($i = 1; $i <= 24; $i++) {
+        echo "<tr>";
+        echo "<td>" . $i . "</td>";
+        echo "<td>" . number_format(calculateEnergy($voltage, $current, $i), 5) . "</td>";
+        echo "<td>" . number_format(calculateTotalCharge($voltage, $current, $current_rate, $i), 2) . "</td>";
+        echo "</tr>";
+    }
+    echo "</table>";
+
+    echo "<br>Power: " . number_format(calculatePower($voltage, $current), 5) . " kW";
+    echo "<br>Rate: " . number_format($current_rate / 100, 3) . " RM";
 }
+?>
+
